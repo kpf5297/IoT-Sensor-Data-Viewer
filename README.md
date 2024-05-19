@@ -49,7 +49,6 @@ This project is licensed under the MIT License.
 
 
 
-```md
 # IoT Sensor Data Viewer
 
 ## Description
@@ -77,7 +76,7 @@ This project visualizes sensor data from an IoT setup, including temperature, mi
    ```sql
    sudo mysql -u root -p
    CREATE DATABASE SensorData;
-   CREATE USER 'test'@'localhost' IDENTIFIED BY 'Monkey79';
+   CREATE USER 'test'@'localhost' IDENTIFIED BY 'Password';
    GRANT ALL PRIVILEGES ON SensorData.* TO 'test'@'localhost';
    FLUSH PRIVILEGES;
    ```
@@ -122,44 +121,4 @@ This project visualizes sensor data from an IoT setup, including temperature, mi
 1. **Clone the repository and open the solution in Visual Studio.**
 2. **Build and run the C# application to start visualizing the sensor data.**
 
-## Additional Information
 
-### Cloning the Repository
-
-```sh
-git clone https://github.com/yourusername/IoT-Sensor-Data-Viewer.git
-```
-Replace `yourusername` with your GitHub username.
-
-### Organizing Your Project Files
-
-- Create directories for the Arduino code, Python code, and any other necessary files.
-- Create a text file for the setup instructions.
-
-Here’s an example structure:
-
-```
-IoT-Sensor-Data-Viewer/
-├── Arduino/
-│   └── SensorDataCollector.ino
-├── Python/
-│   └── app.py
-├── CSharp/
-│   └── SensorDataViewer.sln
-├── setup_instructions.md
-└── README.md
-```
-
-### Adding, Committing, and Pushing the Files
-
-```sh
-cd IoT-Sensor-Data-Viewer
-git add .
-git commit -m "Initial commit with project files"
-git push origin main
-```
-
-This guide provides step-by-step instructions for setting up the IoT Sensor Data Viewer project, from installing and configuring software on the Raspberry Pi to running the C# application for data visualization.
-```
-
-You can copy and paste the above text directly into your `README.md` file in your GitHub repository. This will create a well-formatted document with all the necessary setup instructions.
