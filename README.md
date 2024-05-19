@@ -47,14 +47,7 @@ IoT Sensor Data Viewer is a comprehensive system designed to collect, store, and
 This project is licensed under the MIT License.
 
 
-
-
-# IoT Sensor Data Viewer
-
-## Description
-This project visualizes sensor data from an IoT setup, including temperature, microphone, and IMU (accelerometer and gyroscope) readings. The data is collected using a Raspberry Pi RP2040, sent to a Flask server running on a Raspberry Pi 4B, and displayed in a C# application.
-
-## Setup Instructions
+# Setup Instructions
 
 ### Setting Up the Raspberry Pi 4B
 
