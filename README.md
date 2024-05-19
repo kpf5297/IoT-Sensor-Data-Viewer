@@ -42,14 +42,124 @@ IoT Sensor Data Viewer is a comprehensive system designed to collect, store, and
 1. Clone the repository and open the solution in Visual Studio.
 2. Build and run the C# application to start visualizing the sensor data.
 
-## Contributing
-
-Contributions are welcome! Fork the repository and submit a pull request with your changes.
-
 ## License
 
 This project is licensed under the MIT License.
 
-## Contact
 
-For any questions or issues, please open an issue in the repository or contact the maintainer.
+
+
+```md
+# IoT Sensor Data Viewer
+
+## Description
+This project visualizes sensor data from an IoT setup, including temperature, microphone, and IMU (accelerometer and gyroscope) readings. The data is collected using a Raspberry Pi RP2040, sent to a Flask server running on a Raspberry Pi 4B, and displayed in a C# application.
+
+## Setup Instructions
+
+### Setting Up the Raspberry Pi 4B
+
+1. **Install Raspbian OS on your Raspberry Pi 4B.**
+2. **Update your system:**
+   ```sh
+   sudo apt update
+   sudo apt upgrade
+   ```
+3. **Install MariaDB:**
+   ```sh
+   sudo apt install mariadb-server
+   ```
+4. **Secure your MariaDB installation:**
+   ```sh
+   sudo mysql_secure_installation
+   ```
+5. **Create the database and user:**
+   ```sql
+   sudo mysql -u root -p
+   CREATE DATABASE SensorData;
+   CREATE USER 'test'@'localhost' IDENTIFIED BY 'Monkey79';
+   GRANT ALL PRIVILEGES ON SensorData.* TO 'test'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+6. **Create the necessary table in the database:**
+   ```sql
+   USE SensorData;
+   CREATE TABLE SensorReadings (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       temperature FLOAT,
+       mic INT,
+       accelX FLOAT,
+       accelY FLOAT,
+       accelZ FLOAT,
+       gyroX FLOAT,
+       gyroY FLOAT,
+       gyroZ FLOAT
+   );
+   ```
+
+### Setting Up the Flask Server
+
+1. **Install Python and necessary libraries:**
+   ```sh
+   sudo apt install python3 python3-pip
+   pip3 install flask mysql-connector-python
+   ```
+2. **Copy the `app.py` file to your Raspberry Pi.**
+3. **Run the Flask server:**
+   ```sh
+   python3 app.py
+   ```
+
+### Setting Up the Raspberry Pi RP2040
+
+1. **Install Arduino IDE and configure it for RP2040.**
+2. **Open the `SensorDataCollector.ino` file in Arduino IDE.**
+3. **Upload the code to the RP2040.**
+
+### Running the C# Application
+
+1. **Clone the repository and open the solution in Visual Studio.**
+2. **Build and run the C# application to start visualizing the sensor data.**
+
+## Additional Information
+
+### Cloning the Repository
+
+```sh
+git clone https://github.com/yourusername/IoT-Sensor-Data-Viewer.git
+```
+Replace `yourusername` with your GitHub username.
+
+### Organizing Your Project Files
+
+- Create directories for the Arduino code, Python code, and any other necessary files.
+- Create a text file for the setup instructions.
+
+Here’s an example structure:
+
+```
+IoT-Sensor-Data-Viewer/
+├── Arduino/
+│   └── SensorDataCollector.ino
+├── Python/
+│   └── app.py
+├── CSharp/
+│   └── SensorDataViewer.sln
+├── setup_instructions.md
+└── README.md
+```
+
+### Adding, Committing, and Pushing the Files
+
+```sh
+cd IoT-Sensor-Data-Viewer
+git add .
+git commit -m "Initial commit with project files"
+git push origin main
+```
+
+This guide provides step-by-step instructions for setting up the IoT Sensor Data Viewer project, from installing and configuring software on the Raspberry Pi to running the C# application for data visualization.
+```
+
+You can copy and paste the above text directly into your `README.md` file in your GitHub repository. This will create a well-formatted document with all the necessary setup instructions.
