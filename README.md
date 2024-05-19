@@ -1,117 +1,104 @@
-# IoT Sensor Data Viewer
+# Sensor Data Viewer
 
-## Description
-
-IoT Sensor Data Viewer is a comprehensive system designed to collect, store, and visualize sensor data in real-time. This project leverages the power of IoT devices, such as Raspberry Pi and Raspberry Pi RP2040, to gather data from various sensors. The data is stored in a MariaDB database managed by a Flask server and displayed using a C# Windows application. The system is designed for real-time monitoring and historical data analysis, providing valuable insights into sensor readings.
+## Overview
+Sensor Data Viewer is a comprehensive system designed to collect, process, and visualize sensor data from an Arduino device. The system includes a Python Flask server to handle data storage and retrieval, an iOS app to display the data, and an Apple Watch app to monitor key sensor metrics such as temperature, pitch, and roll.
 
 ## Features
+- **Arduino**: Collects data from temperature, accelerometer, and gyroscope sensors.
+- **Python Flask Server**: Handles data storage in a MariaDB database and provides endpoints for data retrieval.
+- **iOS App**: Displays sensor data with auto-update functionality.
+- **Apple Watch App**: Shows real-time temperature, pitch, and roll with auto-update functionality.
+- **WiFi Connection Indicators**: Uses the Arduino built-in LED to indicate WiFi connection status and data transmission.
 
-- **Real-Time Data Collection and Visualization**
-- **Historical Data Analysis**
-- **User-Friendly Interface**
-- **Auto-Update Feature**
+## Requirements
+- **Hardware**:
+  - Arduino with WiFi capabilities (e.g., Arduino Nano 33 IoT)
+  - Sensors: Temperature, Accelerometer, Gyroscope
+  - Raspberry Pi (for running the Flask server)
+  - Apple iPhone
+  - Apple Watch
 
-## Technologies Used
+- **Software**:
+  - Arduino IDE
+  - Xcode
+  - Python 3
+  - Flask
+  - MariaDB
 
-- **Languages**: Python, C#
-- **Frameworks**: Flask, .NET Framework
-- **Databases**: MariaDB
-- **Hardware**: Raspberry Pi 4B, Raspberry Pi RP2040
-- **Sensors**: Temperature Sensor, Microphone Sensor, Accelerometer, Gyroscope
+## Installation
 
-## Prerequisites
+### Arduino Setup
+1. **Clone the Repository**:
+    ```bash
+    git clone -b pitch-and-roll https://github.com/<your-username>/SensorDataViewer.git
+    cd SensorDataViewer
+    ```
 
-- **Hardware**: Raspberry Pi 4B, Raspberry Pi RP2040, Sensors (Temperature, Microphone, Accelerometer, Gyroscope), SD Card (32GB), Power Supply
-- **Software**: Raspbian OS, Python 3, Flask, MariaDB, Arduino IDE, Visual Studio, .NET Framework
+2. **Upload Code to Arduino**:
+    - Open `WiFiProject.ino` in the Arduino IDE.
+    - Configure your network credentials and BSSID in the code.
+    - Upload the code to your Arduino.
 
-## Installation and Usage
+### Python Flask Server
+1. **Install Dependencies**:
+    ```bash
+    pip install flask mysql-connector-python
+    ```
 
-### Setting Up Raspberry Pi 4B
+2. **Setup MariaDB**:
+    - Install MariaDB on your Raspberry Pi.
+    - Create a database and user for the project.
+    - Import the SQL schema provided in the repository.
 
-1. Install Raspbian OS on your Raspberry Pi 4B.
-2. Install and configure MariaDB.
-3. Set up the Flask server to manage data collection and retrieval.
+3. **Run the Server**:
+    ```bash
+    python app.py
+    ```
 
-### Setting Up Raspberry Pi RP2040
+### iOS App
+1. **Open Project in Xcode**:
+    - Open `SensorDataViewer.xcodeproj` in Xcode.
 
-1. Install Arduino IDE and configure it for RP2040.
-2. Upload the sensor data collection code to the RP2040.
+2. **Configure Network Settings**:
+    - Update the server URL in `SensorDataViewModel.swift` to match your Flask server's IP address.
 
-### Running the C# Application
+3. **Build and Run**:
+    - Build and run the project on your iPhone.
 
-1. Clone the repository and open the solution in Visual Studio.
-2. Build and run the C# application to start visualizing the sensor data.
+### Apple Watch App
+1. **Add Watch Target**:
+    - Ensure the Apple Watch target is added to the Xcode project.
+
+2. **Configure Network Settings**:
+    - Update the server URL in `SensorDataViewModel.swift` for the watch app.
+
+3. **Build and Run**:
+    - Build and run the project on your Apple Watch.
+
+## Usage
+
+### Arduino Indicators
+- **Trying to Connect**: LED blinks slowly.
+- **Connected**: LED is solid.
+- **Transmitting Data**: LED blinks rapidly.
+
+### iOS App
+- Displays real-time sensor data with options to view data from the last hour, day, or week.
+- Auto-update functionality to refresh data at regular intervals.
+
+### Apple Watch App
+- Displays temperature, pitch, and roll with a 1-minute data range.
+- Auto-update switch to refresh data at regular intervals.
+
+## Contributing
+We welcome contributions! Please fork the repository and submit pull requests to the `pitch-and-roll` branch.
 
 ## License
-
 This project is licensed under the MIT License.
 
+## Acknowledgments
+Special thanks to the contributors and the open-source community for their invaluable support and resources.
 
-# Setup Instructions
+---
 
-### Setting Up the Raspberry Pi 4B
-
-1. **Install Raspbian OS on your Raspberry Pi 4B.**
-2. **Update your system:**
-   ```sh
-   sudo apt update
-   sudo apt upgrade
-   ```
-3. **Install MariaDB:**
-   ```sh
-   sudo apt install mariadb-server
-   ```
-4. **Secure your MariaDB installation:**
-   ```sh
-   sudo mysql_secure_installation
-   ```
-5. **Create the database and user:**
-   ```sql
-   sudo mysql -u root -p
-   CREATE DATABASE SensorData;
-   CREATE USER 'test'@'localhost' IDENTIFIED BY 'Password';
-   GRANT ALL PRIVILEGES ON SensorData.* TO 'test'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
-6. **Create the necessary table in the database:**
-   ```sql
-   USE SensorData;
-   CREATE TABLE SensorReadings (
-       id INT AUTO_INCREMENT PRIMARY KEY,
-       timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       temperature FLOAT,
-       mic INT,
-       accelX FLOAT,
-       accelY FLOAT,
-       accelZ FLOAT,
-       gyroX FLOAT,
-       gyroY FLOAT,
-       gyroZ FLOAT
-   );
-   ```
-
-### Setting Up the Flask Server
-
-1. **Install Python and necessary libraries:**
-   ```sh
-   sudo apt install python3 python3-pip
-   pip3 install flask mysql-connector-python
-   ```
-2. **Copy the `app.py` file to your Raspberry Pi.**
-3. **Run the Flask server:**
-   ```sh
-   python3 app.py
-   ```
-
-### Setting Up the Raspberry Pi RP2040
-
-1. **Install Arduino IDE and configure it for RP2040.**
-2. **Open the `SensorDataCollector.ino` file in Arduino IDE.**
-3. **Upload the code to the RP2040.**
-
-### Running the C# Application
-
-1. **Clone the repository and open the solution in Visual Studio.**
-2. **Build and run the C# application to start visualizing the sensor data.**
-
-
+For detailed setup instructions, refer to the `SETUP.md` file in the repository.

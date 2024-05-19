@@ -1,41 +1,102 @@
 #include <WiFiNINA.h>
 #include <ArduinoHttpClient.h>
-#include "WiFiConnection.h"
 #include "SensorData.h"
 
+// Network credentials
+const char* ssid = "ssid";  // The SSID should match exactly
+const char* password = "Password";
+const byte desiredBSSID[] = { 0x12, 0x34, 0x56, 0xC5, 0xBD, 0x3C };  // Replace with your network's BSSID
+
+// Server details
 const char* serverAddress = "192.168.1.152";  // Replace with your Raspberry Pi's IP address
 const int port = 5000;
 
 WiFiClient wifiClient;
 HttpClient client = HttpClient(wifiClient, serverAddress, port);
 
+// LED pin
+const int ledPin = LED_BUILTIN;
+
+bool isDesiredNetwork(uint8_t* bssid) {
+    for (int i = 0; i < 6; i++) {
+        if (bssid[i] != desiredBSSID[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void connectToWiFi() {
+    Serial.println("Scanning for networks...");
+    int numNetworks = WiFi.scanNetworks();
+    Serial.println("Scan completed");
+
+    if (numNetworks == 0) {
+        Serial.println("No networks found");
+        return;
+    }
+
+    bool foundNetwork = false;
+    for (int i = 0; i < numNetworks; ++i) {
+        Serial.print("Network name: ");
+        Serial.println(WiFi.SSID(i));
+
+        uint8_t bssid[6];
+        WiFi.BSSID(i, bssid);
+
+        if (isDesiredNetwork(bssid)) {
+            Serial.print("Connecting to: ");
+            Serial.println(WiFi.SSID(i));
+            WiFi.begin(WiFi.SSID(i), password);
+            foundNetwork = true;
+            break;
+        }
+    }
+
+    if (!foundNetwork) {
+        Serial.println("Desired network not found");
+        return;
+    }
+
+    // Check the connection status
+    unsigned long startAttemptTime = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {  // 10 seconds timeout
+        digitalWrite(ledPin, HIGH);
+        delay(500);
+        digitalWrite(ledPin, LOW);
+        delay(500);
+        Serial.print(".");
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("WiFi connected");
+        // Serial.print("IP Address: ");
+        // Serial.println(WiFi.localIP());
+        digitalWrite(ledPin, HIGH);  // Solid LED to indicate connection
+    } else {
+        Serial.println("Failed to connect to WiFi");
+    }
+}
+
 void setup() {
     Serial.begin(115200);
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, LOW);
 
     // Initialize the sensor
     SensorData::getInstance().begin();
 
     // Connect to WiFi
-    Serial.println("Scanning for available networks...");
-    WiFiConnection::getInstance().scanNetworks();
-
-    // Select network
-    int networkIndex = WiFiConnection::getInstance().selectNetwork();
-
-    // Get password
-    String password = WiFiConnection::getInstance().getPassword();
-
-    // Connect to the selected network
-    WiFiConnection::getInstance().connectToNetwork(networkIndex, password);
-
-    if (WiFiConnection::getInstance().isConnected()) {
-        Serial.println("WiFi connected");
-    }
+    connectToWiFi();
 }
 
 void loop() {
-    if (WiFiConnection::getInstance().isConnected()) {
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("WiFi not connected, attempting to reconnect...");
+        connectToWiFi();
+    } else {
         Serial.println("Sending data to server...");
+        digitalWrite(ledPin, LOW);  // Turn off LED before blinking for data transmission
 
         // Read data from the sensor
         float temperature = SensorData::getInstance().readTemperature();
@@ -69,6 +130,14 @@ void loop() {
         payload += gyroZ;
         payload += "}";
 
+        // Blink LED rapidly to indicate data transmission
+        for (int i = 0; i < 6; ++i) {
+            digitalWrite(ledPin, HIGH);
+            delay(100);
+            digitalWrite(ledPin, LOW);
+            delay(100);
+        }
+
         client.beginRequest();
         client.post("/add_data");
         client.sendHeader("Content-Type", "application/json");
@@ -85,6 +154,6 @@ void loop() {
         Serial.print("Response: ");
         Serial.println(response);
 
-        delay(500);  // Wait 500ms before sending next data
+        delay(500);  // Wait 5 seconds before sending next data
     }
 }
