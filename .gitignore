@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+*.pyc
+__pycache__/
+.vscode/
+*.env
+config.py  # if you have a config file with sensitive information
